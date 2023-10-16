@@ -36,42 +36,51 @@
       </footer>
     </div>
 
-    <article class="message is-danger message--hidden">
-      <div class="message-header">
-        <p>Error</p>
-        <button class="delete"></button>
-      </div>
+    <Message 
+      class="is-warning" 
+      :active="errorMessage !== ''"
+      @hide="errorMessage = ''"
+    > 
+      <template #default="{x}">
+        <p>{{ errorMessage }} {{x}}</p>
+      </template>
 
-      <div class="message-body">
-        Unable to add a Todo
-      </div>
-    </article>
+      <template #header>
+        <p>Server error</p>
+      </template>
+    </Message>
+
   </div>
 </template>
 
 
 <script>
+import Message from './components/Message.vue'
 import Filter from './components/Filter.vue';
 import TodoItem from './components/TodoItem.vue';
 
 export default {
   components: {
+    Message,
     TodoItem,
     Filter,
   },
   data() {
     let todos = [];
     const jsonData = localStorage.getItem('todos') || '';
+    let errorMessage = '';
 
     try {
       todos = JSON.parse(jsonData);
     } catch (err) {
+      errorMessage = 'Unable to load todos';
     }
 
     return {
       todos,
       title: '',
       status: 'all',
+      errorMessage,
     }
   },
   mounted() {
